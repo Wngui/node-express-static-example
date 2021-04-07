@@ -1,17 +1,56 @@
 <!doctype html>
 <html lang="en">
-<head>
-<meta charset="utf-8">
-<title>index.html</title>
-</head>
-<body>
-<h1>index.html</h1>
-<p>Redirection in 2s...</p>
-<script>
-setTimeout(function () {
-   window.location.href = "./page.html";
-}, 2000);
-</script>
-</body>
-</html>
 
+<head>
+  <meta charset="utf-8">
+
+  <title>PhotoScore</title>
+  <!-- Bootstrap core CSS -->
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body class="text-center">
+
+  <div class="cover-container d-flex h-100 p-3 mx-auto flex-column">
+
+    <main role="main" class="inner cover">
+      <h1 class="cover-heading">PhotoScore</h1>
+      <p class="lead">Upload an image and get a rating between 1 & 10.</p>
+      <input class="text-center mb-3 form-control-file" type='file' onchange="imageChanged(this);" />
+      <div class="text-center">
+        <p id="score-text"></p>
+        <img id="image-container" src="" />
+      </div>
+    </main>
+  </div>
+
+  <script>
+    //Called when the user changes image.
+    function imageChanged(input) {
+      readURL(input);
+      getScore(input.value);
+    }
+
+    //Calls the Nodejs Express API to caluclate a score based on the image name.
+    //Example request GET http://localhost:3000/score?name=image.jpg
+    function getScore(imageName) {
+      return fetch('http://localhost:3000/score?name='+imageName).then(score => score.text())
+        .then((score) => {
+          document.getElementById("score-text").innerText = "Score: "+score;
+        });
+    }
+
+    //Loads image and displays it on the website
+    function readURL(input) {
+      if (input.files && input.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function (e) {
+          document.getElementById("image-container").src = e.target.result;
+        };
+        reader.readAsDataURL(input.files[0]);
+      }
+    }
+  </script>
+</body>
+
+</html>
